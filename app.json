@@ -48,7 +48,7 @@
     "AUTO_VOICE": {
       "description": "Make it true if want automatic voice reply .",
       "required": false,
-      "value": "false"
+      "value": "true"
     }, 
 
     "AUTO_REPLY": {
@@ -92,7 +92,7 @@
     "BOT_NAME": {
       "description": "Type here the bot name.",
       "required": false,
-      "value": "𝐒𝐇𝐀𝐁𝐀𝐍-𝐌𝐃"
+      "value": "SHABAN-MD"
 
       }, 
     
@@ -129,7 +129,7 @@
     "ANTI_CALL": {
       "description": "Make it true if you want bot auto call rejected.",
       "required": false,
-      "value": "true"
+      "value": "false"
       
     }, 
     
