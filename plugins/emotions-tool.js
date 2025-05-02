@@ -2,44 +2,36 @@ const { cmd } = require('../command');
 
 cmd({
   pattern: "shy",
-  desc: "Shy animated emoji message with typing and fun",
+  desc: "Fun shy conversation with emotion",
   category: "tools",
-  react: "😳",
+  react: "🙈",
   filename: __filename
 },
 async (conn, mek, m, { from }) => {
   try {
-    const shyLines = [
-      { emoji: "😳", line: "Kya dekh rahe ho...?" },
-      { emoji: "😊", line: "Thoda sharma gaya hoon..." },
-      { emoji: "😶", line: "Kuch keh bhi nahi sakta..." },
-      { emoji: "🙈", line: "Aankhein band kar lo..." },
-      { emoji: "🙊", line: "Mujhse baat mat karo ab..." },
+    const shyDialogues = [
+      "🙈: Mujhe dekha tumne?",
+      "😳: Main... main toh bas...",
+      "🥺: Tumhari nazar se bach nahi paaya...",
+      "😅: Ab kya bolun main...",
+      "😶‍🌫️: Chup rehna hi behtar hai...",
+      "💓: Dil dhadak raha hai...",
+      "🤐: Yeh baat kisi se mat kehna...",
+      "🙃: Tum pagal kar doge ek din..."
     ];
 
-    let lastMsg = null;
-
-    for (const { emoji, line } of shyLines) {
-      // Typing simulation
+    for (const line of shyDialogues) {
       await conn.sendPresenceUpdate("composing", from);
-      await new Promise(res => setTimeout(res, 700));
+      await new Promise(r => setTimeout(r, 1000));
 
-      // Delete previous message
-      if (lastMsg) {
-        await conn.sendMessage(from, { delete: lastMsg.key });
-      }
-
-      // Send new animated message
-      const msg = await conn.sendMessage(from, { text: `*Shy Mode:* ${emoji}\n_${line}_` }, { quoted: mek });
-      lastMsg = msg;
-
-      await new Promise(r => setTimeout(r, 1200));
+      await conn.sendMessage(from, { text: line }, { quoted: mek });
+      await new Promise(r => setTimeout(r, 1500));
     }
 
     await conn.sendPresenceUpdate("paused", from);
 
-    // Final funny line
-    await conn.sendMessage(from, { text: "*Bas ab zyada sharma mat ja!* 😅" }, { quoted: mek });
+    // Final message
+    await conn.sendMessage(from, { text: "*Shy Level Maxed Out! Tum bahut dangerous ho...* 😳" }, { quoted: mek });
 
   } catch (e) {
     console.log(e);
