@@ -2,7 +2,7 @@ const { cmd } = require('../command');
 
 cmd({
   pattern: "shy",
-  desc: "Random shy poetry with animation",
+  desc: "Random shy poetry with smooth animation",
   category: "tools",
   react: "💘",
   filename: __filename
@@ -30,21 +30,21 @@ async (conn, mek, m, { from }) => {
 
     // Random 8 lines
     const selectedLines = shyLines.sort(() => 0.5 - Math.random()).slice(0, 8);
-    selectedLines.push("*Tum itne cute kyun ho?* 😳"); // Final punch line
+    selectedLines.push("*Tum itne cute kyun ho?* 😳");
 
     let lastMsg;
 
     for (const line of selectedLines) {
       await conn.sendPresenceUpdate("composing", from);
-      await new Promise(r => setTimeout(r, 800));
+      await new Promise(r => setTimeout(r, 1000)); // Typing
 
       if (lastMsg) {
+        await new Promise(r => setTimeout(r, 1600)); // Wait before delete
         await conn.sendMessage(from, { delete: lastMsg.key });
-        await new Promise(r => setTimeout(r, 200));
+        await new Promise(r => setTimeout(r, 200)); // Slight gap
       }
 
       lastMsg = await conn.sendMessage(from, { text: line }, { quoted: mek });
-      await new Promise(r => setTimeout(r, 1300));
     }
 
     await conn.sendPresenceUpdate("paused", from);
