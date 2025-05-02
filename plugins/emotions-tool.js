@@ -1,349 +1,48 @@
 const { cmd } = require('../command');
 
 cmd({
-    pattern: "happy",
-    desc: "Displays a dynamic edit msg for fun.",
-    category: "tools",
-    react: "😂",
-    filename: __filename
+  pattern: "shy",
+  desc: "Shy animated emoji message with typing and fun",
+  category: "tools",
+  react: "😳",
+  filename: __filename
 },
-async (conn, mek, m, { from, reply }) => {
-    try {
-        const loadingMessage = await conn.sendMessage(from, { text: '😂' });
-        const emojiMessages = [
-            "😃", "😄", "😁", "😊", "😎", "🥳",
-            "😸", "😹", "🌞", "🌈", "😃", "😄",
-            "😁", "😊", "😎", "🥳", "😸", "😹",
-            "🌞", "🌈", "😃", "😄", "😁", "😊"
-        ];
+async (conn, mek, m, { from }) => {
+  try {
+    const shyLines = [
+      { emoji: "😳", line: "Kya dekh rahe ho...?" },
+      { emoji: "😊", line: "Thoda sharma gaya hoon..." },
+      { emoji: "😶", line: "Kuch keh bhi nahi sakta..." },
+      { emoji: "🙈", line: "Aankhein band kar lo..." },
+      { emoji: "🙊", line: "Mujhse baat mat karo ab..." },
+    ];
 
-        for (const line of emojiMessages) {
-            await new Promise(resolve => setTimeout(resolve, 1000)); // Delay for 1 second
-            await conn.relayMessage(
-                from,
-                {
-                    protocolMessage: {
-                        key: loadingMessage.key,
-                        type: 14,
-                        editedMessage: {
-                            conversation: line,
-                        },
-                    },
-                },
-                {}
-            );
-        }
-    } catch (e) {
-        console.log(e);
-        reply(`❌ *Error!* ${e.message}`);
+    let lastMsg = null;
+
+    for (const { emoji, line } of shyLines) {
+      // Typing simulation
+      await conn.sendPresenceUpdate("composing", from);
+      await new Promise(res => setTimeout(res, 700));
+
+      // Delete previous message
+      if (lastMsg) {
+        await conn.sendMessage(from, { delete: lastMsg.key });
+      }
+
+      // Send new animated message
+      const msg = await conn.sendMessage(from, { text: `*Shy Mode:* ${emoji}\n_${line}_` }, { quoted: mek });
+      lastMsg = msg;
+
+      await new Promise(r => setTimeout(r, 1200));
     }
+
+    await conn.sendPresenceUpdate("paused", from);
+
+    // Final funny line
+    await conn.sendMessage(from, { text: "*Bas ab zyada sharma mat ja!* 😅" }, { quoted: mek });
+
+  } catch (e) {
+    console.log(e);
+    await conn.sendMessage(from, { text: `❌ *Error:* ${e.message}` }, { quoted: mek });
+  }
 });
-
-cmd({
-    pattern: "heart",
-    desc: "Displays a dynamic edit msg for fun.",
-    category: "tools",
-    react: "❤️",
-    filename: __filename
-},
-async (conn, mek, m, { from, reply }) => {
-    try {
-        const loadingMessage = await conn.sendMessage(from, { text: '🖤' });
-        const emojiMessages = [
-            "💖", "💗", "💕", "🩷", "💛", "💚",
-            "🩵", "💙", "💜", "🖤", "🩶", "🤍",
-            "🤎", "❤️‍🔥", "💞", "💓", "💘", "💝",
-            "♥️", "💟", "❤️‍🩹", "❤️"
-        ];
-
-        for (const line of emojiMessages) {
-            await new Promise(resolve => setTimeout(resolve, 1000)); // Delay for 1 second
-            await conn.relayMessage(
-                from,
-                {
-                    protocolMessage: {
-                        key: loadingMessage.key,
-                        type: 14,
-                        editedMessage: {
-                            conversation: line,
-                        },
-                    },
-                },
-                {}
-            );
-        }
-    } catch (e) {
-        console.log(e);
-        reply(`❌ *Error!* ${e.message}`);
-    }
-});
-
-cmd({
-    pattern: "angry",
-    desc: "Displays a dynamic edit msg for fun.",
-    category: "tools",
-    react: "🤡",
-    filename: __filename
-},
-async (conn, mek, m, { from, reply }) => {
-    try {
-        const loadingMessage = await conn.sendMessage(from, { text: '👽' });
-        const emojiMessages = [
-            "😡", "😠", "🤬", "😤", "😾", "😡",
-            "😠", "🤬", "😤", "😾"
-        ];
-
-        for (const line of emojiMessages) {
-            await new Promise(resolve => setTimeout(resolve, 1000)); // Delay for 1 second
-            await conn.relayMessage(
-                from,
-                {
-                    protocolMessage: {
-                        key: loadingMessage.key,
-                        type: 14,
-                        editedMessage: {
-                            conversation: line,
-                        },
-                    },
-                },
-                {}
-            );
-        }
-    } catch (e) {
-        console.log(e);
-        reply(`❌ *Error!* ${e.message}`);
-    }
-});
-
-cmd({
-    pattern: "sad",
-    desc: "Displays a dynamic edit msg for fun.",
-    category: "tools",
-    react: "😶",
-    filename: __filename
-},
-async (conn, mek, m, { from, reply }) => {
-    try {
-        const loadingMessage = await conn.sendMessage(from, { text: '😔' });
-        const emojiMessages = [
-            "🥺", "😟", "😕", "😖", "😫", "🙁",
-            "😩", "😥", "😓", "😪", "😢", "😔",
-            "😞", "😭", "💔", "😭", "😿"
-        ];
-
-        for (const line of emojiMessages) {
-            await new Promise(resolve => setTimeout(resolve, 1000)); // Delay for 1 second
-            await conn.relayMessage(
-                from,
-                {
-                    protocolMessage: {
-                        key: loadingMessage.key,
-                        type: 14,
-                        editedMessage: {
-                            conversation: line,
-                        },
-                    },
-                },
-                {}
-            );
-        }
-    } catch (e) {
-        console.log(e);
-        reply(`❌ *Error!* ${e.message}`);
-    }
-});
-
-cmd({
-    pattern: "shy",
-    desc: "Displays a dynamic edit msg for fun.",
-    category: "tools",
-    react: "🧐",
-    filename: __filename
-},
-async (conn, mek, m, { from, reply }) => {
-    try {
-        const loadingMessage = await conn.sendMessage(from, { text: '🧐' });
-        const emojiMessages = [
-            "😳", "😊", "😶", "🙈", "🙊",
-            "😳", "😊", "😶", "🙈", "🙊"
-        ];
-
-        for (const line of emojiMessages) {
-            await new Promise(resolve => setTimeout(resolve, 1000)); // Delay for 1 second
-            await conn.relayMessage(
-                from,
-                {
-                    protocolMessage: {
-                        key: loadingMessage.key,
-                        type: 14,
-                        editedMessage: {
-                            conversation: line,
-                        },
-                    },
-                },
-                {}
-            );
-        }
-    } catch (e) {
-        console.log(e);
-        reply(`❌ *Error!* ${e.message}`);
-    }
-});
-
-cmd({
-    pattern: "moon",
-    desc: "Displays a dynamic edit msg for fun.",
-    category: "tools",
-    react: "🌚",
-    filename: __filename
-},
-async (conn, mek, m, { from, reply }) => {
-    try {
-        const loadingMessage = await conn.sendMessage(from, { text: '🌝' });
-        const emojiMessages = [
-            "🌗", "🌘", "🌑", "🌒", "🌓", "🌔",
-            "🌕", "🌖", "🌗", "🌘", "🌑", "🌒",
-            "🌓", "🌔", "🌕", "🌖", "🌗", "🌘",
-            "🌑", "🌒", "🌓", "🌔", "🌕", "🌖",
-            "🌗", "🌘", "🌑", "🌒", "🌓", "🌔",
-            "🌕", "🌖", "🌝🌚"
-        ];
-
-        for (const line of emojiMessages) {
-            await new Promise(resolve => setTimeout(resolve, 1000)); // Delay for 1 second
-            await conn.relayMessage(
-                from,
-                {
-                    protocolMessage: {
-                        key: loadingMessage.key,
-                        type: 14,
-                        editedMessage: {
-                            conversation: line,
-                        },
-                    },
-                },
-                {}
-            );
-        }
-    } catch (e) {
-        console.log(e);
-        reply(`❌ *Error!* ${e.message}`);
-    }
-});
-
-cmd({
-    pattern: "confused",
-    desc: "Displays a dynamic edit msg for fun.",
-    category: "tools",
-    react: "🤔",
-    filename: __filename
-},
-async (conn, mek, m, { from, reply }) => {
-    try {
-        const loadingMessage = await conn.sendMessage(from, { text: '🤔' });
-        const emojiMessages = [
-            "😕", "😟", "😵", "🤔", "😖", 
-            "😲", "😦", "🤷", "🤷‍♂️", "🤷‍♀️"
-        ];
-
-        for (const line of emojiMessages) {
-            await new Promise(resolve => setTimeout(resolve, 1000)); // Delay for 1 second
-            await conn.relayMessage(
-                from,
-                {
-                    protocolMessage: {
-                        key: loadingMessage.key,
-                        type: 14,
-                        editedMessage: {
-                            conversation: line,
-                        },
-                    },
-                },
-                {}
-            );
-        }
-    } catch (e) {
-        console.log(e);
-        reply(`❌ *Error!* ${e.message}`);
-    }
-});
-
-cmd({
-    pattern: "hot",
-    desc: "Displays a dynamic edit msg for fun.",
-    category: "tools",
-    react: "💋",
-    filename: __filename
-},
-async (conn, mek, m, { from, reply }) => {
-    try {
-        const loadingMessage = await conn.sendMessage(from, { text: '💋' });
-        const emojiMessages = [
-            "🥵", "❤️", "💋", "😫", "🤤", 
-            "😋", "🥵", "🥶", "🙊", "😻", 
-            "🙈", "💋", "🫂", "🫀", "👅", 
-            "👄", "💋"
-        ];
-
-        for (const line of emojiMessages) {
-            await new Promise(resolve => setTimeout(resolve, 1000)); // Delay for 1 second
-            await conn.relayMessage(
-                from,
-                {
-                    protocolMessage: {
-                        key: loadingMessage.key,
-                        type: 14,
-                        editedMessage: {
-                            conversation: line,
-                        },
-                    },
-                },
-                {}
-            );
-        }
-    } catch (e) {
-        console.log(e);
-        reply(`❌ *Error!* ${e.message}`);
-    }
-});
-
-cmd({
-    pattern: "nikal",
-    desc: "Displays a dynamic edit msg for fun.",
-    category: "tools",
-    react: "🗿",
-    filename: __filename
-},
-async (conn, mek, m, { from, reply }) => {
-    try {
-        const loadingMessage = await conn.sendMessage(from, { text: 'ALI-XMD☠️' });
-        
-        // Define the ASCII art messages
-        const asciiMessages = [
-            "⠀⠀⠀⣠⣶⡾⠏⠉⠙⠳⢦⡀⠀⠀⠀⢠⠞⠉⠙⠲⡀⠀\n ⠀⣴⠿⠏⠀⠀⠀⠀⠀     ⢳⡀⠀⡏⠀⠀⠀   ⠀  ⢷\n⢠⣟⣋⡀⢀⣀⣀⡀⠀⣀⡀   ⣧⠀⢸⠀⠀⠀  ⠀    ⡇\n⢸⣯⡭⠁⠸⣛⣟⠆⡴⣻⡲     ⣿  ⣸   Nikal   ⡇\n ⣟⣿⡭⠀⠀⠀⠀⠀⢱⠀⠀      ⣿  ⢹⠀          ⡇\n  ⠙⢿⣯⠄⠀⠀⠀__⠀   ⠀   ⡿ ⠀⡇⠀⠀⠀⠀    ⡼\n⠀⠀⠀⠹⣶⠆⠀⠀⠀⠀⠀⡴⠃⠀   ⠘⠤⣄⣠⠞⠀\n⠀⠀⠀⠀⢸⣷⡦⢤⡤⢤⣞⣁⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀\n⠀⢀⣤⣴⣿⣏⠁⠀⠀⠸⣏⢯⣷⣖⣦⡀⠀⠀⠀⠀⠀⠀\n⢀⣾⣽⣿⣿⣿⣿⠛⢲⣶⣾⢉⡷⣿⣿⠵⣿⠀⠀⠀⠀⠀⠀\n⣼⣿⠍⠉⣿⡭⠉⠙⢺⣇⣼⡏⠀⠀ ⠀⣄⢸⠀⠀⠀⠀⠀⠀`", "⠀⠀⠀⣠⣶⡾⠏⠉⠙⠳⢦⡀⠀⠀⠀⢠⠞⠉⠙⠲⡀⠀\n ⠀⣴⠿⠏⠀⠀⠀⠀⠀  ⠀  ⢳⡀⠀⡏⠀⠀⠀   ⠀  ⢷\n⢠⣟⣋⡀⢀⣀⣀⡀⠀⣀⡀   ⣧⠀⢸⠀⠀⠀       ⡇\n⢸⣯⡭⠁⠸⣛⣟⠆⡴⣻⡲     ⣿  ⣸   Lavde   ⡇\n ⣟⣿⡭⠀⠀⠀⠀⠀⢱⠀⠀      ⣿  ⢹⠀          ⡇\n  ⠙⢿⣯⠄⠀⠀|__|⠀⠀   ⡿ ⠀⡇⠀⠀⠀⠀    ⡼\n⠀⠀⠀⠹⣶⠆⠀⠀⠀⠀⠀⡴⠃⠀   ⠘⠤⣄⣠⠞⠀\n⠀⠀⠀⠀⢸⣷⡦⢤⡤⢤⣞⣁⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀\n⠀⢀⣤⣴⣿⣏⠁⠀⠀⠸⣏⢯⣷⣖⣦⡀⠀⠀⠀⠀⠀⠀\n⢀⣾⣽⣿⣿⣿⣿⠛⢲⣶⣾⢉⡷⣿⣿⠵⣿⠀⠀⠀⠀⠀⠀\n⣼⣿⠍⠉⣿⡭⠉⠙⢺⣇⣼⡏⠀⠀ ⠀⣄⢸⠀⠀⠀⠀⠀⠀`", "⠀⠀⠀⣠⣶⡾⠏⠉⠙⠳⢦⡀⠀⠀⠀⢠⠞⠉⠙⠲⡀⠀\n ⠀⣴⠿⠏⠀⠀     ⠀   ⢳⡀⠀⡏⠀⠀    ⠀  ⢷\n⢠⣟⣋⡀⢀⣀⣀⡀⠀⣀⡀   ⣧⠀⢸⠀⠀⠀⠀      ⡇\n⢸⣯⡭⠁⠸⣛⣟⠆⡴⣻⡲    ⣿  ⣸   Pehli   ⡇\n ⣟⣿⡭⠀⠀⠀⠀⠀⢱⠀⠀     ⣿  ⢹⠀           ⡇\n  ⠙⢿⣯⠄⠀⠀(P)⠀⠀     ⡿ ⠀⡇⠀⠀⠀⠀    ⡼\n⠀⠀⠀⠹⣶⠆⠀⠀⠀⠀⠀⡴⠃⠀   ⠘⠤⣄⣠⠞⠀\n⠀⠀⠀⠀⢸⣷⡦⢤⡤⢤⣞⣁⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀\n⠀⢀⣤⣴⣿⣏⠁⠀⠀⠸⣏⢯⣷⣖⣦⡀⠀⠀⠀⠀⠀⠀\n⢀⣾⣽⣿⣿⣿⣿⠛⢲⣶⣾⢉⡷⣿⣿⠵⣿⠀⠀⠀⠀⠀⠀\n⣼⣿⠍⠉⣿⡭⠉⠙⢺⣇⣼⡏⠀⠀ ⠀⣄⢸⠀⠀⠀⠀⠀⠀`", "⠀⠀⠀⣠⣶⡾⠏⠉⠙⠳⢦⡀⠀⠀⠀⢠⠞⠉⠙⠲⡀⠀\n ⠀⣴⠿⠏⠀⠀     ⠀   ⢳⡀⠀⡏⠀⠀    ⠀  ⢷\n⢠⣟⣋⡀⢀⣀⣀⡀⠀⣀⡀   ⣧⠀⢸⠀   ⠀     ⡇\n⢸⣯⡭⠁⠸⣛⣟⠆⡴⣻⡲    ⣿  ⣸  Fursat  ⡇\n ⣟⣿⡭⠀⠀⠀⠀⠀⢱⠀        ⣿  ⢹⠀          ⡇\n  ⠙⢿⣯⠄⠀⠀⠀__ ⠀  ⠀   ⡿ ⠀⡇⠀⠀⠀⠀    ⡼\n⠀⠀⠀⠹⣶⠆⠀⠀⠀⠀⠀⡴⠃⠀   ⠘⠤⣄⣠⠞⠀\n⠀⠀⠀⠀⢸⣷⡦⢤⡤⢤⣞⣁⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀\n⠀⢀⣤⣴⣿⣏⠁⠀⠀⠸⣏⢯⣷⣖⣦⡀⠀⠀⠀⠀⠀⠀\n⢀⣾⣽⣿⣿⣿⣿⠛⢲⣶⣾⢉⡷⣿⣿⠵⣿⠀⠀⠀⠀⠀⠀\n⣼⣿⠍⠉⣿⡭⠉⠙⢺⣇⣼⡏⠀⠀ ⠀⣄⢸⠀⠀⠀⠀⠀⠀`", "⠀⠀⠀⣠⣶⡾⠏⠉⠙⠳⢦⡀⠀⠀⠀⢠⠞⠉⠙⠲⡀⠀\n ⠀⣴⠿⠏⠀⠀⠀⠀⠀      ⢳⡀⠀⡏⠀⠀    ⠀  ⢷\n⢠⣟⣋⡀⢀⣀⣀⡀⠀⣀⡀   ⣧⠀⢸⠀⠀ ⠀      ⡇\n⢸⣯⡭⠁⠸⣛⣟⠆⡴⣻⡲    ⣿  ⣸  Meeee   ⡇\n ⣟⣿⡭⠀⠀⠀⠀⠀⢱⠀⠀       ⣿  ⢹⠀          ⡇\n  ⠙⢿⣯⠄⠀⠀|__| ⠀    ⡿ ⠀⡇⠀⠀⠀⠀    ⡼\n⠀⠀⠀⠹⣶⠆⠀⠀⠀⠀⠀⡴⠃⠀   ⠘⠤⣄⣠⠞⠀\n⠀⠀⠀⠀⢸⣷⡦⢤⡤⢤⣞⣁⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀\n⠀⢀⣤⣴⣿⣏⠁⠀⠀⠸⣏⢯⣷⣖⣦⡀⠀⠀⠀⠀⠀⠀\n⢀⣾⣽⣿⣿⣿⣿⠛⢲⣶⣾⢉⡷⣿⣿⠵⣿⠀⠀⠀⠀⠀⠀\n⣼⣿⠍⠉⣿⡭⠉⠙⢺⣇⣼⡏⠀⠀ ⠀⣄⢸⠀⠀⠀⠀⠀⠀`", "⠀⠀⠀⣠⣶⡾⠏⠉⠙⠳⢦⡀⠀⠀⠀⢠⠞⠉⠙⠲⡀⠀\n ⠀⣴⠿⠏⠀⠀⠀⠀   ⠀  ⠀⢳⡀⠀⡏⠀⠀       ⢷\n⢠⣟⣋⡀⢀⣀⣀⡀⠀⣀⡀   ⣧⠀⢸⠀  ⠀       ⡇\n⢸⣯⡭⠁⠸⣛⣟⠆⡴⣻⡲   ⣿  ⣸   Nikal   ⡇\n ⣟⣿⡭⠀⠀⠀⠀⠀⢱⠀       ⣿  ⢹⠀           ⡇\n  ⠙⢿⣯⠄⠀⠀lodu⠀⠀   ⡿ ⠀⡇⠀⠀⠀⠀   ⡼\n⠀⠀⠀⠹⣶⠆⠀⠀⠀⠀⠀  ⡴⠃⠀   ⠘⠤⣄⣠⠞⠀\n⠀⠀⠀⠀⢸⣷⡦⢤⡤⢤⣞⣁⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀\n⠀⢀⣤⣴⣿⣏⠁⠀⠀⠸⣏⢯⣷⣖⣦⡀⠀⠀⠀⠀⠀⠀\n⢀⣾⣽⣿⣿⣿⣿⠛⢲⣶⣾⢉⡷⣿⣿⠵⣿⠀⠀⠀⠀⠀⠀\n⣼⣿⠍⠉⣿⡭⠉⠙⢺⣇⣼⡏⠀⠀ ⠀⣄⢸⠀"
-        ];
-
-        // Send the initial loading message
-        for (const asciiMessage of asciiMessages) {
-            await new Promise(resolve => setTimeout(resolve, 500)); // Delay for 500ms second
-            await conn.relayMessage(
-                from,
-                {
-                    protocolMessage: {
-                        key: loadingMessage.key,
-                        type: 14,
-                        editedMessage: {
-                            conversation: asciiMessage,
-                        },
-                    },
-                },
-                {}
-            );
-        }
-    } catch (e) {
-        console.log(e);
-        reply(`❌ *Error!* ${e.message}`);
-    }
-});
-
-// > JawadTechX 
