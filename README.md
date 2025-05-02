@@ -5,9 +5,9 @@
 </p>
 
 <p align="center">
-  A powerful multi-device WhatsApp bot written in JavaScript, built using Baileys.
+  A Powerful Multi-Device WhatsApp Bot Written In n JavaScript, Built Using Baileys 2025 🦭.
   <br/>
-  Made with love by <strong>MR SHABAN</strong>.
+  Made With Love By <strong>MR SHABAN</strong>.
 </p>
 
 ---
