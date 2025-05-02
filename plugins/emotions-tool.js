@@ -12,7 +12,9 @@ async (conn, mek, m, { from, reply }) => {
         const loadingMessage = await conn.sendMessage(from, { text: '😂' });
         const emojiMessages = [
             "😃", "😄", "😁", "😊", "😎", "🥳",
-            "🤩", "🤪", "🤣", "😊"
+            "😸", "😹", "🌞", "🌈", "😃", "😄",
+            "😁", "😊", "😎", "🥳", "😸", "😹",
+            "🌞", "🌈", "😃", "😄", "😁", "😊"
         ];
 
         for (const line of emojiMessages) {
@@ -314,7 +316,7 @@ cmd({
 },
 async (conn, mek, m, { from, reply }) => {
     try {
-        const loadingMessage = await conn.sendMessage(from, { text: 'KHANX-AI🗿' });
+        const loadingMessage = await conn.sendMessage(from, { text: 'ALI-XMD☠️' });
         
         // Define the ASCII art messages
         const asciiMessages = [
