@@ -28,11 +28,10 @@ cmd({
     // Scrape hamariweb.com
     const hwRes = await axios.get('https://hamariweb.com/poetry/two-lines-sad-poetry-spg4/');
     const $hw = cheerio.load(hwRes.data);
-    $hw('.pdblock').each((i, el) => {
-      const text = $hw(el).text().trim();
-      const cleanText = text.replace(/\s{2,}/g, '\n').split('\n').filter(t => t.trim() !== '');
-      if (cleanText.length === 2) {
-        poetryList.push(cleanText.join('\n') + '۔');
+    $hw('.poetrybox .pdblock').each((i, el) => {
+      const lines = $hw(el).find('a').text().trim().split('\n').filter(line => line.trim());
+      if (lines.length === 2) {
+        poetryList.push(lines.join('\n') + '۔');
       }
     });
 
