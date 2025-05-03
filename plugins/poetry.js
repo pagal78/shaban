@@ -1,4 +1,5 @@
 const axios = require('axios');
+const cheerio = require('cheerio');
 const { cmd } = require('../command');
 
 cmd({
@@ -9,23 +10,34 @@ cmd({
   filename: __filename
 }, async (conn, mek, m, { from, reply }) => {
   try {
-    console.log('📌 Poetry command triggered');
     const response = await axios.get('https://poetrymehfil.com/urdu-poetry/the-best-2-line-urdu-poetry-collection-on-every-topic/');
-    console.log('Response received:', response.data); // Debugging line
+    
+    // Load the HTML content into Cheerio
+    const $ = cheerio.load(response.data);
 
-    const html = response.data;
+    // Extract poetry from the page (using specific selectors)
+    const poetryList = [];
+    $('p').each((i, el) => {
+      const poetryText = $(el).text().trim();
+      if (poetryText.length > 0) {
+        poetryList.push(poetryText);
+      }
+    });
 
-    // Extract 2-line poetry using regex
-    const poetryList = [...html.matchAll(/<p>(.*?)<\/p>/g)].map(p => p[1])
-      .filter(line => line.includes('<br>') || line.includes('<br />'))
-      .map(p => p.replace(/<br\s*\/?>/gi, '\n').replace(/<\/?[^>]+(>|$)/g, '').trim());
+    // Filter and clean poetry
+    const filteredPoetry = poetryList.filter(text => text.includes('۔')); // Only Urdu text with sentence-ending punctuation.
 
-    if (poetryList.length === 0) throw new Error("No poetry found");
+    if (filteredPoetry.length === 0) {
+      throw new Error('No valid poetry found.');
+    }
 
-    const randomPoetry = poetryList[Math.floor(Math.random() * poetryList.length)];
+    // Get a random poetry
+    const randomPoetry = filteredPoetry[Math.floor(Math.random() * filteredPoetry.length)];
+
     await conn.sendMessage(from, { text: `📝 *Random Urdu Poetry:*\n\n${randomPoetry}` }, { quoted: mek });
+
   } catch (err) {
-    console.error('Poetry Error:', err.message);
+    console.error('Error fetching poetry:', err.message);
     reply('❌ Poetry fetch nahi ho saki. Thodi dair baad koshish karein.');
   }
 });
