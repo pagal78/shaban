@@ -12,24 +12,12 @@ cmd({
   try {
     const poetryList = [];
 
-    // Scrape poetrymehfil.com
-    const mehfilRes = await axios.get('https://poetrymehfil.com/urdu-poetry/the-best-2-line-urdu-poetry-collection-on-every-topic/');
-    const $mehfil = cheerio.load(mehfilRes.data);
-    $mehfil('p').each((i, el) => {
-      const text = $mehfil(el).text().trim();
-      if (text.includes('۔') && text.length < 200) {
-        const lines = text.split(/[۔\n]/).filter(t => t.trim().length > 0);
-        if (lines.length === 2) {
-          poetryList.push(lines.join('۔\n') + '۔');
-        }
-      }
-    });
-
-    // Scrape hamariweb.com
+    // Scrape only from hamariweb.com
     const hwRes = await axios.get('https://hamariweb.com/poetry/two-lines-sad-poetry-spg4/');
-    const $hw = cheerio.load(hwRes.data);
-    $hw('.poetrybox .pdblock').each((i, el) => {
-      const lines = $hw(el).find('a').text().trim().split('\n').filter(line => line.trim());
+    const $ = cheerio.load(hwRes.data);
+
+    $('.poetrybox .pdblock a').each((i, el) => {
+      const lines = $(el).text().trim().split('\n').filter(line => line.trim());
       if (lines.length === 2) {
         poetryList.push(lines.join('\n') + '۔');
       }
@@ -42,7 +30,7 @@ cmd({
     const randomPoetry = poetryList[Math.floor(Math.random() * poetryList.length)];
 
     await conn.sendMessage(from, {
-      text: `📝 *Random Urdu Poetry:*\n\n${randomPoetry}`
+      text: `📝 *Random Urdu Poetry (SHABAN-MD)*\n\n${randomPoetry}`
     }, { quoted: mek });
 
   } catch (err) {
