@@ -1,43 +1,61 @@
-const axios = require('axios');
-const cheerio = require('cheerio');
-const { cmd } = require('../command');
+const { cmd } = require('../lib/command');
+const { createCanvas } = require('canvas');
+const { Sticker, StickerTypes } = require('wa-sticker-formatter');
+
+// Aap yahan jitni marzi poetry lines add kar sakte hain
+const poetryLines = [
+  'محبت اگر چہ خواب ہے، حقیقتوں کا رنگ رکھتی ہے',
+  'ہمیں خبر ہے کہ ہم کچھ نہیں، مگر تمھاری کمی بہت ہے',
+  'یادیں وہ خزانہ ہیں جو وقت کے ساتھ قیمتی ہوتا جاتا ہے',
+  'دل وہ مسافر ہے جو کبھی منزل پر نہیں رکتا',
+  'خاموشی بھی ایک زبان ہے، اور یہ اکثر وہ سب کہہ دیتی ہے جو الفاظ نہیں کہہ سکتے',
+  'ہم نے خوابوں میں بھی تیری خوشبو محسوس کی ہے',
+  'دھوکہ دینے والوں کو معاف کرنا ہی سب سے بڑا بدلہ ہے',
+  'تیرا نام لبوں پر آتے ہی مسکراہٹ سی چھا جاتی ہے',
+];
 
 cmd({
   pattern: 'poetry',
-  desc: 'Get random 2-line Urdu poetry.',
+  desc: 'Random Urdu poetry sticker',
   category: 'fun',
-  react: '📝',
-  filename: __filename
-}, async (conn, mek, m, { from, reply }) => {
+  use: '.poetry',
+}, async ({ conn, m }) => {
   try {
-    const poetryList = [];
+    const text = poetryLines[Math.floor(Math.random() * poetryLines.length)];
+    const canvas = createCanvas(512, 512);
+    const ctx = canvas.getContext('2d');
 
-    const hwRes = await axios.get('https://hamariweb.com/poetry/two-lines-sad-poetry-spg4/');
-    const $ = cheerio.load(hwRes.data);
+    // Background white
+    ctx.fillStyle = '#ffffff';
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-    $('.poetrybox .pdblock a').each((i, el) => {
-      const html = $(el).html();
-      if (html) {
-        const text = html.replace(/<br\s*\/?>/gi, '\n').replace(/<\/?[^>]+(>|$)/g, "").trim();
-        const lines = text.split('\n').filter(line => line.trim());
-        if (lines.length === 2) {
-          poetryList.push(lines.join('\n') + '۔');
-        }
-      }
+    // Urdu text settings
+    ctx.fillStyle = '#000000';
+    ctx.font = '28px sans-serif'; // Font-free version
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+
+    // Break lines if long
+    const lines = text.match(/.{1,25}/g);
+    lines.forEach((line, i) => {
+      ctx.fillText(line, canvas.width / 2, 200 + i * 40);
     });
 
-    if (poetryList.length === 0) {
-      throw new Error('No valid poetry found');
-    }
+    // Create sticker
+    const buffer = canvas.toBuffer();
+    const sticker = new Sticker(buffer, {
+      pack: 'SHABAN-MD',
+      author: 'Poetry Bot',
+      type: StickerTypes.FULL,
+      quality: 75,
+      background: 'transparent',
+    });
 
-    const randomPoetry = poetryList[Math.floor(Math.random() * poetryList.length)];
+    const stickerBuffer = await sticker.toBuffer();
+    await conn.sendMessage(m.chat, { sticker: stickerBuffer }, { quoted: m });
 
-    await conn.sendMessage(from, {
-      text: `📝 *Random Urdu Poetry (HamariWeb):*\n\n${randomPoetry}`
-    }, { quoted: mek });
-
-  } catch (err) {
-    console.error('Poetry Fetch Error:', err);
-    reply('❌ Poetry fetch nahi ho saki. Thodi dair baad koshish karein.');
+  } catch (e) {
+    console.error('Poetry sticker error:', e);
+    m.reply('Sticker banate waqt error aaya.');
   }
 });
