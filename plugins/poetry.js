@@ -1,19 +1,36 @@
 const { cmd } = require('../lib/command');
-const axios = require('axios');
+
+const poetryList = [
+  'محبت میں کوئی فرمائش نہ کرنا\nمیری غربت کی پھر نمائش نہ کرنا',
+  'یادیں ہی رہ گئی ہیں تمہاری،\nورنہ ہم نے تو تمہیں بھلا دیا تھا۔',
+  'اداسی کی بھی اپنی شان ہوتی ہے،\nیہ ہر کسی کے بس کی بات نہیں۔',
+  'محبت فقط ایک بار ہوتی ہے،\nباقی سب صرف وقت گزاری ہے۔',
+  'ترے جانے کے بعد زیست ایسی کچھ گزری\nزندہ رہے جی نہ پائے ترے جانے کے بعد',
+  'پتھر برسانے والا کوئی رہ تو نہیں گیا\nمجھے مٹانے والا کوئی رہ تو نہیں گیا',
+  'اے محبت ترے انجام پہ رونا آیا\nجانے کیوں آج ترے نام پہ رونا آیا',
+  'کیوں رنجشیں اب اور بڑھانے کے لیے جاؤں\nکیوں پھر سے میں رسوائی اٹھانے کے لیے جاؤں',
+  'توٹا ہو دل تو دکھ ہوتا ہے\nکر کے محبت کسی سے یہ دل روتا ہے',
+  'درد کا احساس تو تب ہوتا ہے جب\nکسی سے محبت ہو اور اس کے دل میں کوئی اور ہوتا ہے',
+  'ہم نے تمہیں دل میں بسایا تھا\nتم نے ہمیں وقت گزاری میں لگایا تھا',
+  'محبت خواب جیسی تھی\nتم حقیقت بن گئے',
+  'وہ جو کہتا تھا مر جائیں گے تمہارے بغیر\nآج وہ کسی اور کے ساتھ زندہ ہے',
+  'دھوکہ دینا فن ہے\nاور تم فنکار نکلے',
+  'تم روٹھو تو منانے کی فرصت نہیں ملتی\nوقت نکالوں یا آنکھوں سے برساتوں کو سنبھالوں؟',
+  'احساس کے بازار میں احساس نہ بکا\nلوگ خالی الفاظ لے کر دل جیت گئے',
+  'خاموشیاں بہت کچھ کہہ جاتی ہیں\nدل کی بات زبان تک نہیں آتی',
+  'ہم محبت میں ہار گئے\nپر تم بازی گر نکلے',
+  'تم نے چھوڑا ہمیں وقت کی طرح\nہم نے یاد کیا تمہیں عبادت کی طرح',
+  'وفا کے نام پر کیا کیا سہا ہم نے\nجیسے بے وفا ہونا جرم نہ ہو'
+  // 30 aur lines tak aur bhi add ki ja sakti hain
+];
 
 cmd({
-  pattern: 'sadpoetry',
-  desc: 'Send a random sad Urdu poetry',
+  pattern: 'poetry',
+  desc: 'Send a random 2-line Urdu poetry',
   type: 'fun',
   use: '',
   filename: __filename
 }, async (m) => {
-  try {
-    const response = await axios.get('https://poetrydb.org/lang/ur;type:sad');
-    const randomPoetry = response.data[Math.floor(Math.random() * response.data.length)].line.join('\n');
-    m.reply(randomPoetry);
-  } catch (error) {
-    console.error(error);
-    m.reply('Kuch galat ho gaya. Koshish dobara karein.');
-  }
+  const randomPoetry = poetryList[Math.floor(Math.random() * poetryList.length)];
+  m.reply(randomPoetry);
 });
