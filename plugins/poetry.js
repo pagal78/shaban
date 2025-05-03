@@ -16,13 +16,13 @@ cmd({
     const $ = cheerio.load(hwRes.data);
 
     $('.poetrybox .pdblock a').each((i, el) => {
-      // Replace <br> with \n and extract text
-      const html = $(el).html()?.replace(/<br\s*\/?>/gi, '\n') || '';
-      const text = cheerio.load('<div>' + html + '</div>')('div').text().trim();
-
-      const lines = text.split('\n').filter(line => line.trim());
-      if (lines.length === 2) {
-        poetryList.push(lines.join('\n') + '۔');
+      const html = $(el).html();
+      if (html) {
+        const text = html.replace(/<br\s*\/?>/gi, '\n').replace(/<\/?[^>]+(>|$)/g, "").trim();
+        const lines = text.split('\n').filter(line => line.trim());
+        if (lines.length === 2) {
+          poetryList.push(lines.join('\n') + '۔');
+        }
       }
     });
 
@@ -33,7 +33,7 @@ cmd({
     const randomPoetry = poetryList[Math.floor(Math.random() * poetryList.length)];
 
     await conn.sendMessage(from, {
-      text: `📝 *Random Urdu Poetry (Hamariweb):*\n\n${randomPoetry}`
+      text: `📝 *Random Urdu Poetry (HamariWeb):*\n\n${randomPoetry}`
     }, { quoted: mek });
 
   } catch (err) {
