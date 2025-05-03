@@ -11,6 +11,8 @@ cmd({
   try {
     console.log('📌 Poetry command triggered');
     const response = await axios.get('https://poetrymehfil.com/urdu-poetry/the-best-2-line-urdu-poetry-collection-on-every-topic/');
+    console.log('Response received:', response.data); // Debugging line
+
     const html = response.data;
 
     // Extract 2-line poetry using regex
