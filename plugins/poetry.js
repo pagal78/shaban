@@ -12,12 +12,15 @@ cmd({
   try {
     const poetryList = [];
 
-    // Scrape only from hamariweb.com
     const hwRes = await axios.get('https://hamariweb.com/poetry/two-lines-sad-poetry-spg4/');
     const $ = cheerio.load(hwRes.data);
 
     $('.poetrybox .pdblock a').each((i, el) => {
-      const lines = $(el).text().trim().split('\n').filter(line => line.trim());
+      // Replace <br> with \n and extract text
+      const html = $(el).html()?.replace(/<br\s*\/?>/gi, '\n') || '';
+      const text = cheerio.load('<div>' + html + '</div>')('div').text().trim();
+
+      const lines = text.split('\n').filter(line => line.trim());
       if (lines.length === 2) {
         poetryList.push(lines.join('\n') + '۔');
       }
@@ -30,7 +33,7 @@ cmd({
     const randomPoetry = poetryList[Math.floor(Math.random() * poetryList.length)];
 
     await conn.sendMessage(from, {
-      text: `📝 *Random Urdu Poetry (SHABAN-MD)*\n\n${randomPoetry}`
+      text: `📝 *Random Urdu Poetry (Hamariweb):*\n\n${randomPoetry}`
     }, { quoted: mek });
 
   } catch (err) {
