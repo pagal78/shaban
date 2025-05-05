@@ -132,17 +132,3 @@ cmd({
     console.log(e);
   }
 });
-              
-// auto offline
-
-cmd({
-  on: "body"
-},    
-async (conn, mek, m, { from, body, isOwner }) => {       
-    if (config.AUTO_OFFLINE === 'true') {
-        await conn.sendPresenceUpdate('unavailable', from); // Bot offline dikhega
-    }
-
-    // Aapka reply ya command ka kaam yahan karen
-    await conn.sendMessage(from, { text: "Bot is replying in offline (ghost) mode." }, { quoted: mek });
-}); // <-- Yeh closing bracket missing thi
