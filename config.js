@@ -61,7 +61,7 @@ AUTO_REPLY: process.env.AUTO_REPLY || "true",
 // make true or false automatic text reply 
 ALWAYS_ONLINE: process.env.ALWAYS_ONLINE || "false",
 // maks true for always online
-ALWAYS_OFFLINE: process.env.ALWAYS_OFFLINE || "false",
+ALWAYS_OFFLINE: process.env.ALWAYS_OFFLINE || "true",
 // maks true for always online 
 PUBLIC_MODE: process.env.PUBLIC_MODE || "true",
 // make false if want private mod
