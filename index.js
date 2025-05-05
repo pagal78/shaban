@@ -93,7 +93,8 @@ const port = process.env.PORT || 9090;
           browser: Browsers.macOS("Safari"),
           syncFullHistory: true,
           auth: state,
-          version
+          version,
+          shouldSendPresence: false,
           })
       
   conn.ev.on('connection.update', (update) => {
