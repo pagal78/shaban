@@ -145,6 +145,12 @@
       "value": "false"
     },
 
+    "AUTO_OFFLINE": {
+      "description": "Make it true if you want auto offline.",
+      "required": false,
+      "value": "false"
+    },
+
     "AUTO_TYPING": {
       "description": "Make it true if you want auto typing.",
       "required": false,
