@@ -134,21 +134,22 @@ const port = process.env.PORT || 9090;
   })
   conn.ev.on('creds.update', saveCreds)
   
-  // Handle presence on startup based on ALWAYS_OFFLINE
-async function handleOfflinePresence(conn) {
-  if (config.ALWAYS_OFFLINE === "true") {
-    try {
-      console.log("ALWAYS_OFFLINE is true → Setting bot to offline presence");
-      await conn.sendPresenceUpdate("unavailable");
-    } catch (err) {
-      console.error("[Presence Error]", err);
-    }
-  }
-}
-  
   // GROUP EVENTS (Welcome / Goodbye / Promote / Demote)
 conn.ev.on('group-participants.update', async (update) => {
     await GroupEvents(conn, update);
+});
+
+//oflinee
+conn.ev.on('messages.upsert', async (msgUpdate) => {
+  try {
+    if (config.ALWAYS_OFFLINE === "true") {
+      await conn.sendPresenceUpdate("unavailable");
+    }
+
+    // Your existing message handling logic here
+  } catch (err) {
+    console.error("[Msg Upsert Error]", err);
+  }
 });
   
   // === Debug Call Event ===
