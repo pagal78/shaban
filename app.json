@@ -43,13 +43,7 @@
       "description": "Make it true if want always online.",
       "required": false,
       "value": "false"  
-    },
-
-    "ALWAYS_OFFLINE": {
-      "description": "Make it true if want always offline.",
-      "required": false,
-      "value": "true"  
-    },
+    },    
   
     "AUTO_VOICE": {
       "description": "Make it true if want automatic voice reply .",

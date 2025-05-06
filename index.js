@@ -93,8 +93,7 @@ const port = process.env.PORT || 9090;
           browser: Browsers.macOS("Safari"),
           syncFullHistory: true,
           auth: state,
-          version,
-          shouldSendPresence: false,
+          version
           })
       
   conn.ev.on('connection.update', (update) => {
@@ -138,19 +137,6 @@ const port = process.env.PORT || 9090;
   // GROUP EVENTS (Welcome / Goodbye / Promote / Demote)
 conn.ev.on('group-participants.update', async (update) => {
     await GroupEvents(conn, update);
-});
-
-//oflinee
-conn.ev.on('messages.upsert', async (msgUpdate) => {
-  try {
-    if (config.ALWAYS_OFFLINE === "true") {
-      await conn.sendPresenceUpdate("unavailable");
-    }
-
-    // Your existing message handling logic here
-  } catch (err) {
-    console.error("[Msg Upsert Error]", err);
-  }
 });
   
   // === Debug Call Event ===
