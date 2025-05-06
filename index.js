@@ -29,6 +29,7 @@ const {
   const ff = require('fluent-ffmpeg')
   const P = require('pino')
   const config = require('./config')
+  const startAutoBioUpdate = require('./lib/auto-bio');
   const GroupEvents = require('./lib/groupevents');
   const qrcode = require('qrcode-terminal')
   const StickersTypes = require('wa-sticker-formatter')
@@ -129,14 +130,23 @@ const port = process.env.PORT || 9090;
 ╰─🛠️ *Prefix:* \`${prefix}\`
 
 > _© MADE BY MR SHABAN_`;
-    conn.sendMessage(conn.user.id, { image: { url: `https://i.ibb.co/RK56DRW/shaban-md.jpg` }, caption: up });
-    
-    // === Start Auto Bio Feature ===
-    await startAutoBioUpdate(conn); // <-- Yeh line sahi jagah hai
+    conn.sendMessage(conn.user.id, { image: { url: `https://i.ibb.co/RK56DRW/shaban-md.jpg` }, caption: up })
+  }
+  })
+  conn.ev.on('creds.update', saveCreds)
+  
+//autobioo=====================
+conn.ev.on('connection.update', async (update) => {
+  const { connection } = update;
+  if (connection === 'open') {
+    try {
+      await startAutoBioUpdate(conn);
+      console.log("Auto bio started successfully.");
+    } catch (err) {
+      console.log("Failed to start auto bio:", err.message);
+    }
   }
 });
-
-  conn.ev.on('creds.update', saveCreds)
   
   // GROUP EVENTS (Welcome / Goodbye / Promote / Demote)
 conn.ev.on('group-participants.update', async (update) => {
