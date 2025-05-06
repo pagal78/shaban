@@ -9,8 +9,6 @@ SESSION_ID: process.env.SESSION_ID || "",
 // add your Session Id 
 AUTO_STATUS_SEEN: process.env.AUTO_STATUS_SEEN || "true",
 // make true or false status auto seen
-AUTO_BIO: process.env.AUTO_BIO || "true",
-BIO_UPDATE_INTERVAL: process.env.BIO_UPDATE_INTERVAL || "60",
 AUTO_STATUS_REPLY: process.env.AUTO_STATUS_REPLY || "false",
 // make true if you want auto reply on status 
 AUTO_STATUS_REACT: process.env.AUTO_STATUS_REACT || "true",

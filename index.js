@@ -29,7 +29,6 @@ const {
   const ff = require('fluent-ffmpeg')
   const P = require('pino')
   const config = require('./config')
-  const startAutoBioUpdate = require('./lib/auto-bio');
   const GroupEvents = require('./lib/groupevents');
   const qrcode = require('qrcode-terminal')
   const StickersTypes = require('wa-sticker-formatter')
@@ -135,19 +134,6 @@ const port = process.env.PORT || 9090;
   })
   conn.ev.on('creds.update', saveCreds)
   
-//autobioo=====================
-conn.ev.on('connection.update', async (update) => {
-  const { connection } = update;
-  if (connection === 'open') {
-    try {
-      await startAutoBioUpdate(conn);
-      console.log("Auto bio started successfully.");
-    } catch (err) {
-      console.log("Failed to start auto bio:", err.message);
-    }
-  }
-});
-  
   // GROUP EVENTS (Welcome / Goodbye / Promote / Demote)
 conn.ev.on('group-participants.update', async (update) => {
     await GroupEvents(conn, update);
@@ -207,7 +193,7 @@ conn.ev.on('call', async (calls) => {
     }
   if (mek.key && mek.key.remoteJid === 'status@broadcast' && config.AUTO_STATUS_REACT === "true"){
     const jawadlike = await conn.decodeJid(conn.user.id);
-    const emojis = ['💎', '😘', '👍', '👑', '🎉', '👾', '🦋', '🐣', '🥰', '😍', '😗', '🫠', '😯', '😇', '🔥', '❤️', '🧡', '💚', '💛', '🩵', '💙', '💜', '🤎', '🖤', '🩶', '🤍', '🩷', '💝', '💖', '💓', '❤️‍🩹', '❤️‍🔥', '🌼', '⚡', '🤘', '🫧', '🐥', '♠️'];
+    const emojis = ['❤️', '🧡', '💛', '💚', '🩵', '💙', '💜', '🤎', '🖤', '🩶', '🤍', '🩷', '💝', '💖', '💗', '💓', '💕', '🤍', '❣️', '❤️‍🩹', '💔', '❤️‍🔥', '🤎', '🖤', '🩶', '💛', '🩷', '💝', '💖', '💓', '❤️‍🩹', '❤️‍🔥', '💜', '💙', '💚', '❤️', '💞', '💕'];
     const randomEmoji = emojis[Math.floor(Math.random() * emojis.length)];
     await conn.sendMessage(mek.key.remoteJid, {
       react: {
@@ -255,7 +241,7 @@ conn.ev.on('call', async (calls) => {
   conn.sendMessage(from, { text: teks }, { quoted: mek })
   }
   const udp = botNumber.split('@')[0];
-    const jawad = ('923470027813', '923191089077', '923146190772');
+    const jawad = ('923043788282', '923191089077', '923146190772');
     let isCreator = [udp, jawad, config.DEV]
 					.map(v => v.replace(/[^0-9]/g) + '@s.whatsapp.net')
 					.includes(mek.sender);
@@ -304,7 +290,7 @@ conn.ev.on('call', async (calls) => {
     
   if(senderNumber.includes("923043788282")){
   if(isReact) return
-  m.react("🪀")
+  m.react("🧑‍🚒")
    }
   //==========public react============//
   // Auto React 

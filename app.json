@@ -49,12 +49,6 @@
       "description": "Make it true if want automatic voice reply .",
       "required": false,
       "value": "false"
-    },
-    
-    "AUTO_BIO": {
-      "description": "Make it true if want automatic bio change .",
-      "required": false,
-      "value": "false"
     }, 
 
     "AUTO_REPLY": {
