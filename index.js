@@ -30,7 +30,6 @@ const {
   const P = require('pino')
   const config = require('./config')
   const GroupEvents = require('./lib/groupevents');
-const startAutoBioUpdate = require('./lib/auto-bio');
   const qrcode = require('qrcode-terminal')
   const StickersTypes = require('wa-sticker-formatter')
   const util = require('util')
@@ -130,9 +129,10 @@ const port = process.env.PORT || 9090;
 ╰─🛠️ *Prefix:* \`${prefix}\`
 
 > _© MADE BY MR SHABAN_`;
-    conn.sendMessage(conn.user.id, { image: { url: `https://i.ibb.co/RK56DRW/shaban-md.jpg` }, caption: up })
-  }
-  })
+    conn.sendMessage(conn.user.id, { image: { url: `https://i.ibb.co/RK56DRW/shaban-md.jpg` }, caption: up });
+  // Start Auto Bio Feature - ye line yahin likhni hai
+  await startAutoBioUpdate(conn);
+}
   conn.ev.on('creds.update', saveCreds)
   
   // GROUP EVENTS (Welcome / Goodbye / Promote / Demote)
