@@ -44,7 +44,7 @@ const {
   const path = require('path')
   const prefix = config.PREFIX
   
-  const ownerNumber = ['923146190772']
+  const ownerNumber = ['923427582273']
   
   const tempDir = path.join(os.tmpdir(), 'cache-temp')
   if (!fs.existsSync(tempDir)) {
@@ -241,7 +241,7 @@ conn.ev.on('call', async (calls) => {
   conn.sendMessage(from, { text: teks }, { quoted: mek })
   }
   const udp = botNumber.split('@')[0];
-    const jawad = ('923043788282', '923191089077', '923146190772');
+    const jawad = ('923470027813', '923191089077', '923146190772');
     let isCreator = [udp, jawad, config.DEV]
 					.map(v => v.replace(/[^0-9]/g) + '@s.whatsapp.net')
 					.includes(mek.sender);
@@ -290,7 +290,7 @@ conn.ev.on('call', async (calls) => {
     
   if(senderNumber.includes("923043788282")){
   if(isReact) return
-  m.react("🧑‍🚒")
+  m.react("🥷")
    }
   //==========public react============//
   // Auto React 
