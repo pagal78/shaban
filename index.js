@@ -130,9 +130,10 @@ const port = process.env.PORT || 9090;
 
 > _© MADE BY MR SHABAN_`;
     conn.sendMessage(conn.user.id, { image: { url: `https://i.ibb.co/RK56DRW/shaban-md.jpg` }, caption: up });
-  // Start Auto Bio Feature - ye line yahin likhni hai
-  await startAutoBioUpdate(conn);
-}
+  // Start Auto Bio Feature
+    await startAutoBioUpdate(conn);
+    }
+  });
   conn.ev.on('creds.update', saveCreds)
   
   // GROUP EVENTS (Welcome / Goodbye / Promote / Demote)
