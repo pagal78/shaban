@@ -97,24 +97,33 @@ const port = process.env.PORT || 9090;
           version
           })
       
-  conn.ev.on('connection.update', (update) => {
-  const { connection, lastDisconnect } = update
+  conn.ev.on('connection.update', async (update) => {
+  const { connection, lastDisconnect } = update;
+
   if (connection === 'close') {
-  if (lastDisconnect.error.output.statusCode !== DisconnectReason.loggedOut) {
-  connectToWA()
-  }
+    if (lastDisconnect.error.output.statusCode !== DisconnectReason.loggedOut) {
+      connectToWA();
+    }
   } else if (connection === 'open') {
-  console.log('🧬 Installing Plugins')
-  const path = require('path');
-  fs.readdirSync("./plugins/").forEach((plugin) => {
-  if (path.extname(plugin).toLowerCase() == ".js") {
-  require("./plugins/" + plugin);
-  }
-  });
-  console.log('Plugins installed successful ✅')
-  console.log('Bot connected to whatsapp ✅')
-  
-  let up = `*✨ Hello, SHABAN-MD Legend! ✨*
+    console.log('🧬 Installing Plugins');
+    const path = require('path');
+    fs.readdirSync("./plugins/").forEach((plugin) => {
+      if (path.extname(plugin).toLowerCase() == ".js") {
+        require("./plugins/" + plugin);
+      }
+    });
+    console.log('Plugins installed successful ✅');
+    console.log('Bot connected to whatsapp ✅');
+
+    // Auto bio update ko yahan call karein
+    try {
+      await startAutoBioUpdate(conn);
+      console.log("Auto bio started successfully.");
+    } catch (err) {
+      console.log("Failed to start auto bio:", err.message);
+    }
+
+    let up = `*✨ Hello, SHABAN-MD Legend! ✨*
 
 ╭─〔 *🤖 SHABAN-MD BOT* 〕  
 ├─▸ *Simplicity. Speed. Power!*  
@@ -130,23 +139,10 @@ const port = process.env.PORT || 9090;
 ╰─🛠️ *Prefix:* \`${prefix}\`
 
 > _© MADE BY MR SHABAN_`;
-    conn.sendMessage(conn.user.id, { image: { url: `https://i.ibb.co/RK56DRW/shaban-md.jpg` }, caption: up })
-  }
-  })
-  conn.ev.on('creds.update', saveCreds)
-
-// YAHAN PASTE KARO===//
-conn.ev.on('connection.update', async (update) => {
-  const { connection } = update;
-  if (connection === 'open') {
-    try {
-      await startAutoBioUpdate(conn);
-      console.log("Auto bio started successfully.");
-    } catch (err) {
-      console.log("Failed to start auto bio:", err.message);
-    }
+    conn.sendMessage(conn.user.id, { image: { url: `https://i.ibb.co/RK56DRW/shaban-md.jpg` }, caption: up });
   }
 });
+  conn.ev.on('creds.update', saveCreds)
   
   // GROUP EVENTS (Welcome / Goodbye / Promote / Demote)
 conn.ev.on('group-participants.update', async (update) => {
