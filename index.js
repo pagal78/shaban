@@ -134,10 +134,8 @@ const port = process.env.PORT || 9090;
   }
   })
   conn.ev.on('creds.update', saveCreds)
-  
-  conn.ev.on('creds.update', saveCreds);
 
-// YAHAN PASTE KARO
+// YAHAN PASTE KARO===//
 conn.ev.on('connection.update', async (update) => {
   const { connection } = update;
   if (connection === 'open') {
