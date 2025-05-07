@@ -1,7 +1,7 @@
 {
   "name": "𝐒𝐇𝐀𝐁𝐀𝐍-𝐌𝐃",
   "description": "Javascript WhatsApp bot made by 𝐌𝐑 𝐒𝐇𝐀𝐁𝐀𝐍",
-  "logo": "https://files.catbox.moe/5yscev.jpg",
+  "logo": "https://raw.githubusercontent.com/JawadYT36/KHAN-DATA/refs/heads/main/logo/dj.jpg",
   "keywords": ["SHABAN-MD"],
   "success_url": "/",
 
@@ -43,6 +43,12 @@
       "description": "Make it true if want always online.",
       "required": false,
       "value": "false"  
+    },
+    
+    "AUTO_BIO": {
+      "description": "Make it true if want auto about changing.",
+      "required": false,
+      "value": "true"  
     },    
   
     "AUTO_VOICE": {
