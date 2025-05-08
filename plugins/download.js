@@ -390,53 +390,6 @@ cmd({
   }
 });
 
-//apkmode
-
-cmd({ pattern: "apk2", desc: "Download APK from HappyMod", category: "download", filename: __filename }, async (conn, m, store, { from, quoted, q, reply }) => { try { if (!q) { return reply("❌ Please provide an APK name to search."); }
-
-await conn.sendMessage(from, { react: { text: "⏳", key: m.key } });
-const apiKey = "APIKEY";  // Replace with your actual API key
-const apiUrl = `https://gtech-api-xtp1.onrender.com/api/apk/happymod?query=${encodeURIComponent(q)}&apikey=${apiKey}`;
-const response = await axios.get(apiUrl);
-const data = response.data;
-
-if (!data.status || !data.result || !data.result.length) {
-  return reply("⚠️ No results found for the given app name.");
-}
-
-const app = data.result[0];
-const caption = `🔍 *APK Downloader*
-
-┃ 📦 Title: ${app.title} ┃ ⭐ Rating: ${app.rating} 🔗 Download: Click here ╰━━━━━━━━━━━━━━━⊷`
-
-// Sending the app info with icon
-await conn.sendMessage(from, {
-  image: { url: app.icon },
-  caption: caption
-}, { quoted: m });
-
-// Extracting APK download link from HappyMod
-const downloadApiUrl = `https://gtech-api-xtp1.onrender.com/api/apk/download?url=${encodeURIComponent(app.link)}&apikey=${apiKey}`;
-const downloadResponse = await axios.get(downloadApiUrl);
-const downloadData = downloadResponse.data;
-
-if (!downloadData.status || !downloadData.result || !downloadData.result.url) {
-  return reply("⚠️ APK file not found for the selected app.");
-}
-
-const downloadUrl = downloadData.result.url;
-
-await conn.sendMessage(from, {
-  document: { url: downloadUrl },
-  fileName: `${app.title}.apk`,
-  mimetype: "application/vnd.android.package-archive",
-  caption: `📦 *Download APK:* ${app.title}`
-}, { quoted: m });
-
-await conn.sendMessage(from, { react: { text: "✅", key: m.key } });
-
-} catch (error) { console.error("Error:", error); reply("❌ An error occurred while fetching the APK. Please try again."); } });
-
 // G-Drive-DL
 
 cmd({
