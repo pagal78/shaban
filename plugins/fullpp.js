@@ -1,10 +1,10 @@
 const { cmd } = require('../command');
-const Jimp = require('jimp');
+const sharp = require('sharp');
 
 cmd({
     pattern: "fullpp",
-    react: "🖼️",
-    desc: "WhatsApp Full Profile Picture بغیر کسی پس منظر کے",
+    react: "📸",
+    desc: "WhatsApp Full DP (9:16 Ratio) - Sharp.js",
     category: "tools",
     filename: __filename
 },
@@ -18,20 +18,27 @@ async (conn, mek, m) => {
         m.reply("⏳ تصویر کو فل ڈی پی میں تبدیل کیا جا رہا ہے...");
 
         const media = await conn.downloadMediaMessage(quoted);
-        const image = await Jimp.read(media);
         
-        // WhatsApp Full DP سائز (640x1280)
-        const processedImage = await image
-            .cover(640, 1280) // 9:16 ریشو میں کراپ کریں
-            .quality(80); // فائل سائز کم کریں
+        // Sharp کے ساتھ تصویر پروسیس کریں
+        const buffer = await sharp(media)
+            .resize(640, 1280, {  // بالکل 9:16 ریشو
+                fit: 'cover',     // تصویر کو کراپ کریں
+                position: 'center' // درمیان سے فوکس کریں
+            })
+            .jpeg({              // JPEG میں کنورٹ کریں
+                quality: 80,      // کوالٹی کم کریں
+                mozjpeg: true     // بہترین کمپریشن
+            })
+            .toBuffer();
 
-        const buffer = await processedImage.getBufferAsync(Jimp.MIME_JPEG);
-        await conn.updateProfilePicture(conn.user.id, buffer);
-
-        m.reply("✅ کامیابی! آپ کا پروفائل پکچر فل ڈی پی میں سیٹ ہو گیا ہے۔");
+        // صارف کو تصویر بھیجیں (کیونکہ بوٹ پروفائل نہیں بدل سکتا)
+        await conn.sendMessage(m.chat, { 
+            image: buffer, 
+            caption: "✅ *یہ تصویر WhatsApp Full DP کے لیے تیار ہے!*\n\nاسے ڈاؤنلوڈ کریں اور اپنے پروفائل پر سیٹ کریں۔" 
+        });
 
     } catch (err) {
         console.error(err);
-        m.reply(`❌ خرابی: ${err.message}\n\n⚠️ اگر مسئلہ جاری رہے تو تصویر کو دستی طور پر 640x1280 پکسلز کی JPEG میں تبدیل کر کے دوبارہ کوشش کریں۔`);
+        m.reply("❌ تصویر پروسیس نہیں ہو سکی۔ Sharp.js انسٹال ہے؟");
     }
 });
