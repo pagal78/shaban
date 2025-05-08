@@ -1,10 +1,11 @@
 const { cmd } = require('../command');
 const axios = require('axios');
+const Jimp = require('jimp');
 
 cmd({
     pattern: "fullpp",
     react: "🖼️",
-    desc: "Set full profile picture using BandaheAli API",
+    desc: "Set full profile picture using optimized API method",
     category: "tools",
     filename: __filename
 },
@@ -16,31 +17,50 @@ async (conn, mek, m) => {
             return m.reply('⚠️ *Kisi image par reply karein.*');
         }
 
-        m.reply('⏳ *BandaheAli API se image process ho rahi hai...*');
+        m.reply('⏳ *Image ko optimize kar raha hoon...*');
 
-        // Download the image
+        // Download and pre-process image
         const media = await conn.downloadMediaMessage(quoted);
+        let image = await Jimp.read(media);
         
-        // Convert to base64
-        const base64Image = media.toString('base64');
+        // Resize to reduce file size (max width 1000px, maintain aspect ratio)
+        image = image.resize(1000, Jimp.AUTO);
+        
+        // Convert to buffer with quality 85%
+        const optimizedBuffer = await image.getBufferAsync(Jimp.MIME_JPEG, {
+            quality: 85
+        });
 
-        // Send to BandaheAli API
+        // Convert to base64
+        const base64Image = optimizedBuffer.toString('base64');
+
+        // Send to API with timeout
         const response = await axios.post('https://fullpp-bandaheali.onrender.com/api/process', {
             image: base64Image
         }, {
-            responseType: 'arraybuffer'
+            responseType: 'arraybuffer',
+            timeout: 30000 // 30 seconds timeout
         });
 
-        // Get processed image
         const buffer = Buffer.from(response.data, 'binary');
-
-        // Set profile picture
         await conn.updateProfilePicture(conn.user.id, buffer);
 
-        m.reply('✅ *Full DP (BandaheAli API) set kar di gayi hai!*');
+        m.reply('✅ *Full DP set ho gayi hai!*');
 
     } catch (err) {
         console.error(err);
-        m.reply(`❌ *Error:* ${err.message}`);
+        
+        // Fallback to local processing if API fails
+        try {
+            m.reply('⚠️ API issue, local processing kar raha hoon...');
+            const media = await conn.downloadMediaMessage(quoted);
+            const image = await Jimp.read(media);
+            const processed = await image.resize(640, 1280);
+            const buffer = await processed.getBufferAsync(Jimp.MIME_JPEG);
+            await conn.updateProfilePicture(conn.user.id, buffer);
+            m.reply('✅ *Local method se full DP set ho gayi!*');
+        } catch (fallbackErr) {
+            m.reply(`❌ Dono methods fail: ${fallbackErr.message}`);
+        }
     }
 });
