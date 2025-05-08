@@ -4,7 +4,7 @@ const Jimp = require('jimp');
 cmd({
     pattern: "fullpp",
     react: "🖼️",
-    desc: "Set full image as bot's profile picture (adjusted for full DP)",
+    desc: "Set WhatsApp-style full DP (9:16 in square frame)",
     category: "tools",
     filename: __filename
 },
@@ -21,26 +21,25 @@ async (conn, mek, m) => {
         const media = await conn.downloadMediaMessage(quoted);
         const image = await Jimp.read(media);
 
+        // Step 1: Resize original image to 720x1280 (9:16)
         const fgWidth = 720;
         const fgHeight = 1280;
+        const fg = image.clone().resize(fgWidth, fgHeight);
 
-        const canvasSize = 1280; // square canvas (1:1)
-        const bg = new Jimp(canvasSize, canvasSize);
+        // Step 2: Create square canvas (1280x1280) with blurred background
+        const canvasSize = 1280;
+        const bg = image.clone().cover(canvasSize, canvasSize).blur(10);
 
-        const blurred = image.clone().cover(canvasSize, canvasSize).blur(10);
-        bg.composite(blurred, 0, 0);
-
-        const fg = image.clone().contain(fgWidth, fgHeight);
+        // Step 3: Paste original 9:16 image at center of blurred square
         const x = (canvasSize - fgWidth) / 2;
-        const y = (canvasSize - fgHeight) / 2;
-
+        const y = 0; // top aligned
         bg.composite(fg, x, y);
 
         const buffer = await bg.getBufferAsync(Jimp.MIME_JPEG);
 
         await conn.updateProfilePicture(conn.user.id, buffer);
 
-        m.reply('✅ *Bot ki profile picture 9:16 format ke saath set ho gayi (full view).*');
+        m.reply('✅ *Full size DP WhatsApp-style set kar di gayi hai!*');
     } catch (err) {
         console.error(err);
         m.reply(`❌ *Error:* ${err.message}`);
