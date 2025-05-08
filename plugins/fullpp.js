@@ -4,7 +4,7 @@ const Jimp = require('jimp');
 cmd({
     pattern: "fullpp",
     react: "🖼️",
-    desc: "Set full image (uncropped) as bot's profile picture",
+    desc: "Set uncropped full image as profile photo with black padding",
     category: "tools",
     filename: __filename
 },
@@ -18,21 +18,21 @@ async (conn, mek, m) => {
         m.reply('⏳ *Image process ho rahi hai...*');
 
         const media = await conn.downloadMediaMessage(quoted);
-        const image = await Jimp.read(media);
+        const original = await Jimp.read(media);
 
         const size = 640;
-        const bg = new Jimp(size, size, '#000000'); // black background
+        const background = new Jimp(size, size, "#000000"); // black bg
+        original.contain(size, size); // maintain full image
 
-        // Resize image to fit inside the square while keeping aspect ratio
-        image.contain(size, size); 
+        const x = (size - original.bitmap.width) / 2;
+        const y = (size - original.bitmap.height) / 2;
 
-        // Center the image on the black background
-        bg.composite(image, (size - image.bitmap.width) / 2, (size - image.bitmap.height) / 2);
+        background.composite(original, x, y);
 
-        const buffer = await bg.getBufferAsync(Jimp.MIME_JPEG);
+        const buffer = await background.getBufferAsync(Jimp.MIME_JPEG);
         await conn.updateProfilePicture(conn.user.id, buffer);
 
-        m.reply('✅ *Image full size ke sath black background mein set kar di gayi!*');
+        m.reply("✅ *Image full size ke sath profile pe set ho gayi!*");
     } catch (err) {
         console.error(err);
         m.reply(`❌ *Error:* ${err.message}`);
