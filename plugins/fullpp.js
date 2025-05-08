@@ -7,15 +7,19 @@ cmd({
     category: "tools",
     filename: __filename
 },
-async (conn, mek, m, { quoted, mime }) => {
+async (conn, mek, m) => {
     try {
-        if (!/image/.test(mime)) return m.reply('⚠️ *Kisi image par reply karein.*');
+        const quoted = m.quoted || m.message?.extendedTextMessage?.contextInfo?.quotedMessage;
 
-        m.reply('⏳ *Testing image download...*');
+        if (!quoted || !quoted.mimetype || !quoted.mimetype.startsWith('image')) {
+            return m.reply('⚠️ *Kisi image par reply karein.*');
+        }
+
+        m.reply('⏳ *Image mil gayi, download kar rahe hain...*');
         const media = await quoted.download();
 
         if (!media) {
-            return m.reply('❌ *Image download failed.*');
+            return m.reply('❌ *Image download fail hua.*');
         }
 
         await conn.sendMessage(m.chat, { image: media, caption: '✅ *Image download successful.*' }, { quoted: mek });
