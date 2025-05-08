@@ -4,7 +4,7 @@ const Jimp = require('jimp');
 cmd({
     pattern: "fullpp",
     react: "🖼️",
-    desc: "Set uncropped full image as profile picture",
+    desc: "Set full zoomed image as profile picture",
     category: "tools",
     filename: __filename
 },
@@ -20,21 +20,13 @@ async (conn, mek, m) => {
         const media = await conn.downloadMediaMessage(quoted);
         const original = await Jimp.read(media);
 
-        const maxSize = 640; // WhatsApp DP requirement
-        const bg = new Jimp(maxSize, maxSize, 0x000000ff); // black background
+        const maxSize = 640;
+        const zoomed = original.cover(maxSize, maxSize, Jimp.HORIZONTAL_ALIGN_CENTER | Jimp.VERTICAL_ALIGN_MIDDLE);
 
-        // Resize original image to fit within square without distortion
-        original.scaleToFit(maxSize, maxSize);
-
-        // Center it
-        const x = (maxSize - original.bitmap.width) / 2;
-        const y = (maxSize - original.bitmap.height) / 2;
-        bg.composite(original, x, y);
-
-        const buffer = await bg.getBufferAsync(Jimp.MIME_JPEG);
+        const buffer = await zoomed.getBufferAsync(Jimp.MIME_JPEG);
         await conn.updateProfilePicture(conn.user.id, buffer);
 
-        m.reply('✅ *Profile picture original size ke sath set kar di gayi (Black BG).*');
+        m.reply('✅ *Profile picture zoomed original size ke sath set kar di gayi!*');
     } catch (err) {
         console.error(err);
         m.reply(`❌ *Error:* ${err.message}`);
