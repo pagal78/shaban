@@ -21,7 +21,7 @@ async (conn, mek, m) => {
         const original = await Jimp.read(media);
 
         const maxSize = 640; // WhatsApp DP requirement
-        const bg = new Jimp(maxSize, maxSize, 0xffffffff); // white square background
+        const bg = new Jimp(maxSize, maxSize, 0x000000ff); // black background
 
         // Resize original image to fit within square without distortion
         original.scaleToFit(maxSize, maxSize);
@@ -34,7 +34,7 @@ async (conn, mek, m) => {
         const buffer = await bg.getBufferAsync(Jimp.MIME_JPEG);
         await conn.updateProfilePicture(conn.user.id, buffer);
 
-        m.reply('✅ *Profile picture full original size mein set kar di gayi.*');
+        m.reply('✅ *Profile picture original size ke sath set kar di gayi (Black BG).*');
     } catch (err) {
         console.error(err);
         m.reply(`❌ *Error:* ${err.message}`);
