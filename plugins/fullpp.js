@@ -9,27 +9,35 @@ cmd({
     filename: __filename
 },
 async (conn, mek, m, { quoted, mime }) => {
+    console.log("[fullpp] Command triggered"); // Debug
+
     try {
-        if (!/image/.test(mime)) return m.reply('⚠️ *Kisi image par reply karein jise full DP banana hai.*');
+        if (!/image/.test(mime)) {
+            console.log("[fullpp] Not an image");
+            return m.reply('⚠️ *Kisi image par reply karein jise full DP banana hai.*');
+        }
 
         m.reply('⏳ *Image process ho rahi hai, please wait...*');
-
         const media = await quoted.download();
-        const image = await Jimp.read(media);
+        console.log("[fullpp] Image downloaded");
 
-        const size = 640; // WhatsApp DP size
-        const bg = image.clone().cover(size, size).blur(10);  // blur background
-        const fg = image.clone().contain(size, size);         // original image center mein
+        const image = await Jimp.read(media);
+        console.log("[fullpp] Image loaded into Jimp");
+
+        const size = 640;
+        const bg = image.clone().cover(size, size).blur(10);
+        const fg = image.clone().contain(size, size);
 
         bg.composite(fg, 0, 0);
+        console.log("[fullpp] Image composed");
 
         const buffer = await bg.getBufferAsync(Jimp.MIME_JPEG);
-
         await conn.updateProfilePicture(conn.user.id, buffer);
 
+        console.log("[fullpp] Profile picture updated");
         m.reply('✅ *Bot ki profile picture full DP format mein set kar di gayi!*');
     } catch (err) {
-        console.error(err);
+        console.error("[fullpp] ERROR:", err);
         m.reply(`❌ *Kuch error aaya:* ${err.message}`);
     }
 });
