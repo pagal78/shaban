@@ -1,66 +1,63 @@
 const { cmd } = require('../command');
 const axios = require('axios');
-const Jimp = require('jimp');
+const FormData = require('form-data');
+const fs = require('fs');
 
 cmd({
     pattern: "fullpp",
     react: "🖼️",
-    desc: "Set full profile picture using optimized API method",
+    desc: "Convert image to WhatsApp full DP using BandaheAli API",
     category: "tools",
     filename: __filename
 },
 async (conn, mek, m) => {
     try {
         const quoted = m.quoted;
-
-        if (!quoted || !quoted.mtype || !quoted.mtype.includes('image')) {
-            return m.reply('⚠️ *Kisi image par reply karein.*');
+        if (!quoted || !quoted.mtype.includes('image')) {
+            return m.reply('⚠️ Please reply to an image');
         }
 
-        m.reply('⏳ *Image ko optimize kar raha hoon...*');
+        m.reply('🔄 Processing your image...');
 
-        // Download and pre-process image
+        // Download the image
         const media = await conn.downloadMediaMessage(quoted);
-        let image = await Jimp.read(media);
-        
-        // Resize to reduce file size (max width 1000px, maintain aspect ratio)
-        image = image.resize(1000, Jimp.AUTO);
-        
-        // Convert to buffer with quality 85%
-        const optimizedBuffer = await image.getBufferAsync(Jimp.MIME_JPEG, {
-            quality: 85
+        const tempPath = './temp_image.jpg';
+        fs.writeFileSync(tempPath, media);
+
+        // Prepare form data
+        const form = new FormData();
+        form.append('image', fs.createReadStream(tempPath));
+
+        // Send to API
+        const response = await axios.post('https://fullpp-bandaheali.onrender.com/upload', form, {
+            headers: form.getHeaders(),
+            responseType: 'arraybuffer'
         });
 
-        // Convert to base64
-        const base64Image = optimizedBuffer.toString('base64');
+        // Save and update profile
+        const outputPath = './full_dp.jpg';
+        fs.writeFileSync(outputPath, response.data);
+        await conn.updateProfilePicture(conn.user.id, fs.readFileSync(outputPath));
 
-        // Send to API with timeout
-        const response = await axios.post('https://fullpp-bandaheali.onrender.com/api/process', {
-            image: base64Image
-        }, {
-            responseType: 'arraybuffer',
-            timeout: 30000 // 30 seconds timeout
-        });
+        m.reply('✅ Full DP set successfully!');
 
-        const buffer = Buffer.from(response.data, 'binary');
-        await conn.updateProfilePicture(conn.user.id, buffer);
+        // Clean up
+        fs.unlinkSync(tempPath);
+        fs.unlinkSync(outputPath);
 
-        m.reply('✅ *Full DP set ho gayi hai!*');
-
-    } catch (err) {
-        console.error(err);
+    } catch (error) {
+        console.error('Error:', error);
+        m.reply(`❌ Failed to process image: ${error.message}`);
         
         // Fallback to local processing if API fails
         try {
-            m.reply('⚠️ API issue, local processing kar raha hoon...');
-            const media = await conn.downloadMediaMessage(quoted);
+            const Jimp = require('jimp');
             const image = await Jimp.read(media);
-            const processed = await image.resize(640, 1280);
-            const buffer = await processed.getBufferAsync(Jimp.MIME_JPEG);
+            const buffer = await image.cover(640, 1280).getBufferAsync(Jimp.MIME_JPEG);
             await conn.updateProfilePicture(conn.user.id, buffer);
-            m.reply('✅ *Local method se full DP set ho gayi!*');
-        } catch (fallbackErr) {
-            m.reply(`❌ Dono methods fail: ${fallbackErr.message}`);
+            m.reply('✅ Used fallback method to set DP');
+        } catch (fallbackError) {
+            m.reply('❌ Both API and fallback methods failed');
         }
     }
 });
