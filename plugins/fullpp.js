@@ -4,7 +4,7 @@ const Jimp = require('jimp');
 cmd({
     pattern: "fullpp",
     react: "🖼️",
-    desc: "Set full image as bot's profile picture (9:16)",
+    desc: "Set full image as bot's profile picture (adjusted for full DP)",
     category: "tools",
     filename: __filename
 },
@@ -21,19 +21,26 @@ async (conn, mek, m) => {
         const media = await conn.downloadMediaMessage(quoted);
         const image = await Jimp.read(media);
 
-        const width = 720;
-        const height = 1280;
+        const fgWidth = 720;
+        const fgHeight = 1280;
 
-        const bg = image.clone().cover(width, height).blur(10);   // blurred background
-        const fg = image.clone().contain(width, height);          // center-fit original image
+        const canvasSize = 1280; // square canvas (1:1)
+        const bg = new Jimp(canvasSize, canvasSize);
 
-        bg.composite(fg, 0, 0); // overlay original on blur
+        const blurred = image.clone().cover(canvasSize, canvasSize).blur(10);
+        bg.composite(blurred, 0, 0);
+
+        const fg = image.clone().contain(fgWidth, fgHeight);
+        const x = (canvasSize - fgWidth) / 2;
+        const y = (canvasSize - fgHeight) / 2;
+
+        bg.composite(fg, x, y);
 
         const buffer = await bg.getBufferAsync(Jimp.MIME_JPEG);
 
         await conn.updateProfilePicture(conn.user.id, buffer);
 
-        m.reply('✅ *Bot ki profile picture 9:16 format mein set kar di gayi hai!*');
+        m.reply('✅ *Bot ki profile picture 9:16 format ke saath set ho gayi (full view).*');
     } catch (err) {
         console.error(err);
         m.reply(`❌ *Error:* ${err.message}`);
