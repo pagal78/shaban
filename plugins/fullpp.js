@@ -1,9 +1,10 @@
 const { cmd } = require('../command');
+const Jimp = require('jimp');
 
 cmd({
     pattern: "fullpp",
-    react: "✅",
-    desc: "Test image download",
+    react: "🖼️",
+    desc: "Set full image as bot's profile picture",
     category: "tools",
     filename: __filename
 },
@@ -15,19 +16,24 @@ async (conn, mek, m) => {
             return m.reply('⚠️ *Kisi image par reply karein.*');
         }
 
-        m.reply('⏳ *Image mil gayi, download ho rahi hai...*');
+        m.reply('⏳ *Image process ho rahi hai, please wait...*');
 
         const media = await conn.downloadMediaMessage(quoted);
+        const image = await Jimp.read(media);
 
-        if (!media) return m.reply('❌ *Image download fail hua.*');
+        const size = 640; // WhatsApp DP resolution
+        const bg = image.clone().cover(size, size).blur(10);  // blurred background
+        const fg = image.clone().contain(size, size);         // original image in center
 
-        await conn.sendMessage(m.chat, {
-            image: media,
-            caption: '✅ *Image download successful.*'
-        }, { quoted: mek });
+        bg.composite(fg, 0, 0); // Merge foreground over background
 
+        const buffer = await bg.getBufferAsync(Jimp.MIME_JPEG);
+
+        await conn.updateProfilePicture(conn.user.id, buffer);
+
+        m.reply('✅ *Bot ki profile picture full DP format mein set kar di gayi!*');
     } catch (err) {
         console.error(err);
-        m.reply(`❌ Error: ${err.message}`);
+        m.reply(`❌ *Error:* ${err.message}`);
     }
 });
