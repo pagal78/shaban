@@ -409,14 +409,26 @@ const caption = `🔍 *APK Downloader*
 
 ┃ 📦 Title: ${app.title} ┃ ⭐ Rating: ${app.rating} 🔗 Download: Click here ╰━━━━━━━━━━━━━━━⊷`
 
+// Attempt to fetch the direct APK download link
+const downloadUrl = app.link.replace("https://www.happymod.com//", "https://www.happymod.com/storage/download/mod/") + "?apikey=" + apiKey;
+
 await conn.sendMessage(from, {
   image: { url: app.icon },
+  caption: caption
+}, { quoted: m });
+
+await conn.sendMessage(from, {
+  document: { url: downloadUrl },
+  fileName: `${app.title}.apk`,
+  mimetype: "application/vnd.android.package-archive",
   caption: caption
 }, { quoted: m });
 
 await conn.sendMessage(from, { react: { text: "✅", key: m.key } });
 
 } catch (error) { console.error("Error:", error); reply("❌ An error occurred while fetching the APK. Please try again."); } });
+
+
 
 
 // G-Drive-DL
