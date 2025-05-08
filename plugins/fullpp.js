@@ -1,44 +1,39 @@
 const { cmd } = require('../command');
-const sharp = require('sharp');
+const Jimp = require('jimp');
 
 cmd({
     pattern: "fullpp",
-    react: "📸",
-    desc: "WhatsApp Full DP (9:16 Ratio) - Sharp.js",
+    react: "🖼️",
+    desc: "Set full image as bot's profile picture",
     category: "tools",
     filename: __filename
 },
 async (conn, mek, m) => {
     try {
         const quoted = m.quoted;
-        if (!quoted || !quoted.mtype.includes('image')) {
-            return m.reply("⚠️ براہ کرم کسی تصویر پر ریپلائی کریں۔");
+
+        if (!quoted || !quoted.mtype || !quoted.mtype.includes('image')) {
+            return m.reply('⚠️ *Kisi image par reply karein.*');
         }
 
-        m.reply("⏳ تصویر کو فل ڈی پی میں تبدیل کیا جا رہا ہے...");
+        m.reply('⏳ *Image process ho rahi hai, please wait...*');
 
         const media = await conn.downloadMediaMessage(quoted);
-        
-        // Sharp کے ساتھ تصویر پروسیس کریں
-        const buffer = await sharp(media)
-            .resize(640, 1280, {  // بالکل 9:16 ریشو
-                fit: 'cover',     // تصویر کو کراپ کریں
-                position: 'center' // درمیان سے فوکس کریں
-            })
-            .jpeg({              // JPEG میں کنورٹ کریں
-                quality: 80,      // کوالٹی کم کریں
-                mozjpeg: true     // بہترین کمپریشن
-            })
-            .toBuffer();
+        const image = await Jimp.read(media);
 
-        // صارف کو تصویر بھیجیں (کیونکہ بوٹ پروفائل نہیں بدل سکتا)
-        await conn.sendMessage(m.chat, { 
-            image: buffer, 
-            caption: "✅ *یہ تصویر WhatsApp Full DP کے لیے تیار ہے!*\n\nاسے ڈاؤنلوڈ کریں اور اپنے پروفائل پر سیٹ کریں۔" 
-        });
+        const size = 640; // WhatsApp DP resolution
+        const bg = image.clone().cover(size, size).blur(10);  // blurred background
+        const fg = image.clone().contain(size, size);         // original image in center
 
+        bg.composite(fg, 0, 0); // Merge foreground over background
+
+        const buffer = await bg.getBufferAsync(Jimp.MIME_JPEG);
+
+        await conn.updateProfilePicture(conn.user.id, buffer);
+
+        m.reply('✅ *Bot ki profile picture full DP format mein set kar di gayi!*');
     } catch (err) {
         console.error(err);
-        m.reply("❌ تصویر پروسیس نہیں ہو سکی۔ Sharp.js انسٹال ہے؟");
+        m.reply(`❌ *Error:* ${err.message}`);
     }
 });
