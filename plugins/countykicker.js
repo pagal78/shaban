@@ -2,7 +2,7 @@ const { cmd } = require('../command');
 const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
 cmd({
-    pattern: "kickc",
+    pattern: "kickcountry",
     alias: ["removecountry"],
     desc: "Remove non-admin group members by country code.",
     react: "🌍",
@@ -27,7 +27,7 @@ async (conn, mek, m, {
 
         const allParticipants = groupMetadata.participants;
         const nonAdmins = allParticipants.filter(p => !groupAdmins.includes(p.id));
-        const toRemove = nonAdmins.filter(p => p.id.startsWith(`${countryCode}@`));
+        const toRemove = nonAdmins.filter(p => p.id.split('@')[0].startsWith(countryCode));
 
         if (toRemove.length === 0) {
             return reply(`No non-admin members found with country code +${countryCode}`);
