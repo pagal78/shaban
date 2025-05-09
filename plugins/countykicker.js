@@ -2,7 +2,7 @@ const { cmd } = require('../command');
 const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
 cmd({
-    pattern: "kickcountry",
+    pattern: "kickco",
     alias: ["removecountry"],
     desc: "Remove non-admin group members by country code.",
     react: "🌍",
