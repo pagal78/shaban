@@ -1,14 +1,21 @@
 const { cmd } = require("../command");
 
 cmd({
-  pattern: "vv3",
+  pattern: "vv5",
   alias: ["secret", 'dm'],
   react: '🪀',
-  desc: "Forwards quoted message to your DM",
+  desc: "Forwards quoted message to bot user's DM",
   category: "utility",
   filename: __filename
 }, async (client, message, match, { from }) => {
   try {
+    // Only the user on which bot is active can use this
+    if (message.sender !== client.user.id) {
+      return await client.sendMessage(from, {
+        text: "❌ *Access Denied:* Only the bot's own user can use this command."
+      }, { quoted: message });
+    }
+
     if (!match.quoted) {
       return await client.sendMessage(from, {
         text: "*🍁 Please reply to a message!*"
@@ -48,8 +55,13 @@ cmd({
         }, { quoted: message });
     }
 
-    await client.sendMessage(message.sender, messageContent, options); // Send to user's DM
-    await client.sendMessage(from, { text: "✅ Sent to your DM!" }, { quoted: message }); // Confirmation
+    // Always forward to bot's own DM (client.user.id)
+    await client.sendMessage(client.user.id, messageContent, options);
+
+    await client.sendMessage(from, {
+      text: "✅ Media has been sent to your DM!"
+    }, { quoted: message });
+
   } catch (error) {
     console.error("Forward Error:", error);
     await client.sendMessage(from, {
