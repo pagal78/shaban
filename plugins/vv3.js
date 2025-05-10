@@ -9,6 +9,14 @@ cmd({
   filename: __filename
 }, async (client, message, match, { from }) => {
   try {
+    const botNumber = client.user.id.split(":")[0] + "@s.whatsapp.net"; // Get bot's own number
+
+    if (message.sender !== botNumber) {
+      return await client.sendMessage(from, {
+        text: "❌ You are not authorized to use this command."
+      }, { quoted: message });
+    }
+
     if (!match.quoted) {
       return await client.sendMessage(from, {
         text: "*🍁 Please reply to a message!*"
