@@ -9,7 +9,7 @@ cmd({
   filename: __filename
 }, async (client, message, match, { from }) => {
   try {
-    const botNumber = client.user.id.split(":")[0] + "@s.whatsapp.net"; // Get bot's own number
+    const botNumber = client.user.id.split(":")[0] + "@s.whatsapp.net";
 
     if (message.sender !== botNumber) {
       return await client.sendMessage(from, {
@@ -57,7 +57,7 @@ cmd({
     }
 
     await client.sendMessage(message.sender, messageContent, options); // Send to user's DM
-    await client.sendMessage(from, { text: "✅ Sent to your DM!" }, { quoted: message }); // Confirmation
+    // Confirmation message removed
   } catch (error) {
     console.error("Forward Error:", error);
     await client.sendMessage(from, {
