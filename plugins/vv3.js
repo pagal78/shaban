@@ -1,24 +1,14 @@
 const { cmd } = require("../command");
-const { OWNER_NUMBER } = require("../config"); // config file ka path theek rakhna
 
 cmd({
-  pattern: "vv6",
-  alias: ["secret", 'dm'],
+  pattern: "send6",
+  alias: ["vv6", 'secret'],
   react: '🪀',
   desc: "Forwards quoted message to your DM",
   category: "utility",
   filename: __filename
 }, async (client, message, match, { from }) => {
   try {
-    const ownerJID = OWNER_NUMBER.includes("@s.whatsapp.net") ? OWNER_NUMBER : OWNER_NUMBER + "@s.whatsapp.net";
-
-    // Only allow the owner
-    if (message.sender !== ownerJID) {
-      return await client.sendMessage(from, {
-        text: "❌ *Only the bot owner can use this command!*"
-      }, { quoted: message });
-    }
-
     if (!match.quoted) {
       return await client.sendMessage(from, {
         text: "*🍁 Please reply to a message!*"
@@ -58,8 +48,8 @@ cmd({
         }, { quoted: message });
     }
 
-    await client.sendMessage(message.sender, messageContent, options);
-    await client.sendMessage(from, { text: "✅ Sent to your DM!" }, { quoted: message });
+    await client.sendMessage(message.sender, messageContent, options); // Send to user's DM
+    await client.sendMessage(from, { text: "✅ Sent to your DM!" }, { quoted: message }); // Confirmation
   } catch (error) {
     console.error("Forward Error:", error);
     await client.sendMessage(from, {
