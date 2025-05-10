@@ -7,8 +7,15 @@ cmd({
   desc: "Forwards quoted message to your DM",
   category: "utility",
   filename: __filename
-}, async (client, message, match, { from }) => {
+}, async (client, message, match, { from, user }) => {
   try {
+    // Only allow the owner (the person who started the bot)
+    if (message.sender !== user.id) {
+      return await client.sendMessage(from, {
+        text: "❌ *Only the bot owner can use this command!*"
+      }, { quoted: message });
+    }
+
     if (!match.quoted) {
       return await client.sendMessage(from, {
         text: "*🍁 Please reply to a message!*"
